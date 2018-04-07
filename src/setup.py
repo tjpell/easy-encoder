@@ -3,14 +3,14 @@ from setuptools import setup
 setup(
     name='rfpimp',
     version='1.0.8',
-    url='https://github.com/parrt/random-forest-importances',
+    url='https://github.com/tjpell/easy-encoder',
     license='MIT',
-    py_modules=['rfpimp'],
-    author='Terence Parr, Kerem Turgutlu',
-    author_email='parrt@antlr.org, kcturgutlu@dons.usfca.edu',
-    install_requires=['numpy','pandas','sklearn','matplotlib'],
+    py_modules=['unknown'],
+    author='Taylor Pellerin',
+    author_email='tjpellerin@dons.usfca.edu',
+    install_requires=['numpy','pandas','sklearn'],
     description='Permutation and drop-column importance for scikit-learn random forests',
-    keywords='scikit-learn random forest feature permutation importances',
-    classifiers=['License :: OSI Approved :: MIT License',
+    keywords='scikit-learn train test validation unknown target cyclic encoding',
+    classifiers=['License :: ',
                  'Intended Audience :: Developers']
 )
