@@ -48,9 +48,14 @@ class UnknownEncoder:
 
     def transform(self, y, unk_val=None):
         """
+        Parameters
+        ----------
+        y : array-like of shape (n_samples,)
+            Target values.
 
         unk_val : int, None, string
-                  Value to replace new observations with"""
+                  Value to replace new observations with
+        """
 
         # make sure that every value in val and test is in train. if not, replace with unk_val
         self.unk_val = unk_val if unk_val else None
