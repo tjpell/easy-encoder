@@ -5,9 +5,8 @@ MIT License
 Taylor Pellerin, https://www.linkedin.com/in/tjpell
 """
 
-### not quite working yet
+# not quite working yet
 
-import pandas as pd
 import numpy as np
 from sklearn.model_selection import KFold
 
@@ -18,13 +17,21 @@ class TargetEncoder:
 
     Attributes
     ----------
-    method : which method to apply to target variable
+    method : which statistical method to apply to target variable
+    data : categorical variable used as a predictor
+    target : variable that is of predictive interest
+    k : what order of cross validation to use for regularization
+    fill_na : whether or not to fill NA's with global method (such as mean)
     """
 
     def __init__(self):
         self.method = np.mean()
+        self.data = None
+        self.target = None
+        self.k = None
+        self.fill_na = True
 
-    def fit(self, y):
+    def fit(self, x, y):
         """Fit unknown encoder
 
         Parameters
@@ -44,6 +51,9 @@ class TargetEncoder:
         -------
         self : returns an instance of self.
         """
+
+        self.data = x
+        self.target = y
 
 
     def transform(self, y, method=np.mean(), k=None, fill_na=True):
@@ -64,24 +74,23 @@ class TargetEncoder:
 
         Returns
         -------
-        self : returns an instance of self.
+        enc : returns an instance of self.
         """
         self.method = method
         self.k = k
-        self.
+        self.fill_na = fill_na
 
+        enc = np.array()
 
-    def reg_target_encoding2(self, train, col, splits=5):
-        """ Computes regularize mean encoding.
-        Inputs:
-           train: training dataframe
+        kf = KFold(n_splits=k)
+        for compute_on, apply_to in kf.split(y):
+            four = y.loc[compute_on]
+            computed = method(four.groupby(col))
+            enc = y.loc[apply_to, col].map(computed)
 
-        """
-        kf = KFold(n_splits=5)
-        for four_index, one_index in kf.split(train):
-            four = train.loc[four_index]
-            mean_device_type = four.groupby(col).Real_Spots.mean()
-            train.loc[one_index, col + "_enc"] = train.loc[one_index, col].map(mean_device_type)
+        if fill_na:
+            global_mean = method(y)
+            y.fillna(global_mean, inplace=True)
 
-        global_mean = train.Real_Spots.mean()
-        train[col + '_enc'].fillna(global_mean, inplace=True)
+        return enc
+

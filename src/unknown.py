@@ -15,7 +15,7 @@ class UnknownEncoder:
 
     Attributes
     ----------
-    classes_ : array of shape (n_class,)
+    classes_ : dict of shape (n_class,)
         Holds the label for each class.
 
     unk_val : int, None, string

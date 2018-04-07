@@ -5,7 +5,6 @@ MIT License
 Taylor Pellerin, https://www.linkedin.com/in/tjpell
 """
 
-import pandas as pd
 import numpy as np
 
 class CyclicEncoder:
