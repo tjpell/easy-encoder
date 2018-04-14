@@ -20,14 +20,14 @@ class CyclicEncoder:
 
     def __init__(self):
         self.period = None
-        self.methods = None
+        self.method = None
 
     def fit(self, period):
         self.period = period
         return self
 
-    def transform(self, y, methods=['sin', 'cos']):
-        self.methods = methods
+    def transform(self, y, method=('sin', 'cos')):
+        self.method = method
         period = self.period
 
         if not all(m in ['sin', 'cos'] for m in methods):
@@ -35,28 +35,28 @@ class CyclicEncoder:
                   as sin or cos")
         out = []
 
-        if 'sin' in methods:
+        if 'sin' in method:
             sin = [np.sin(2*np.pi*v/period) for v in y]
             out.append(sin)
-        if 'cos' in methods:
+        if 'cos' in method:
             cos = [np.cos(2*np.pi*v/period) for v in y]
             out.append(cos)
         return out
 
 
-    def fit_transform(self, y, period, methods=['sin', 'cos']):
+    def fit_transform(self, y, period, method=['sin', 'cos']):
         self.period = period
-        self.methods = methods
+        self.method = method
 
-        if not all(m in ['sin', 'cos'] for m in methods):
+        if not all(m in ['sin', 'cos'] for m in method):
             print("Error: please supply a valid method, such \
                   as sin or cos")
         out = []
 
-        if 'sin' in methods:
+        if 'sin' in method:
             sin = [np.sin(2*np.pi*v/period) for v in y]
             out.append(sin)
-        if 'cos' in methods:
+        if 'cos' in method:
             cos = [np.cos(2*np.pi*v/period) for v in y]
             out.append(cos)
         return out

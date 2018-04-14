@@ -58,7 +58,7 @@ class UnknownEncoder:
         """
 
         # make sure that every value in val and test is in train. if not, replace with unk_val
-        self.unk_val = unk_val if unk_val else None
+        self.unk_val = unk_val
         values_dict = self.classes_
 
         val_col = [unk_val if values_dict.get(v) is None else v for v in y.values]

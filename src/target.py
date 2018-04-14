@@ -5,10 +5,10 @@ MIT License
 Taylor Pellerin, https://www.linkedin.com/in/tjpell
 """
 
-# not quite working yet
-
 import numpy as np
+
 from sklearn.model_selection import KFold
+from collections import defaultdict
 
 class TargetEncoder:
     """
@@ -27,19 +27,25 @@ class TargetEncoder:
     def __init__(self):
         self.method = np.mean()
         self.data = None
-        self.target = None
+        self.values_dict = None
         self.k = None
+
         self.fill_na = True
+        self.fill_val = None
+
 
     def fit(self, x, y):
         """Fit unknown encoder
 
         Parameters
         ----------
-        y : array-like of shape (n_samples,)
+        :param x: array-like of shape (n_samples,)
+            Categorical predictor values.
+
+        :param y: array-like of shape (n_samples,)
             Target values.
 
-        method : which statistical method to apply to input data.
+        :param method : which statistical method to apply to input data.
                  Recommended uses include np.mean, max, variance
 
         k : which order of regularization to apply.
@@ -52,45 +58,79 @@ class TargetEncoder:
         self : returns an instance of self.
         """
 
-        self.data = x
-        self.target = y
+        if len(x) != len(y):
+            print("Size mismatch")
+
+        # put all values associated with each variable in a list
+        values_dict = defaultdict(list)
+        [values_dict[key].append(val) for key, val in zip(x,y)]
+
+        self.values_dict = values_dict
+        self.data = y
+        return self
 
 
-    def transform(self, y, method=np.mean(), k=None, fill_na=True):
-        """Fit unknown encoder
+    def transform(self, x, method=np.mean(), k=None, fill_na=True):
+        """Replace categorical value with target encoded version
 
         Parameters
         ----------
-        y : array-like of shape (n_samples,)
-            Target values.
+        :param x: array-like of shape (n_samples,)
+            Categorical predictor values.
 
-        method : which statistical method to apply to input data.
+        :param method: which statistical method to apply to input data.
                  Recommended uses include np.mean, max, variance
 
-        k : which order of regularization to apply.
+        :param k: which order of regularization to apply.
 
-        fill_na : whether or not to apply global method (such as mean)
+        :param fill_na: whether or not to apply global method (such as mean)
                   when filling in NA values
 
         Returns
         -------
-        enc : returns an instance of self.
+        :return: an instance of self
         """
         self.method = method
         self.k = k
         self.fill_na = fill_na
 
-        enc = np.array()
-
-        kf = KFold(n_splits=k)
-        for compute_on, apply_to in kf.split(y):
-            four = y.loc[compute_on]
-            computed = method(four.groupby(col))
-            enc = y.loc[apply_to, col].map(computed)
-
         if fill_na:
-            global_mean = method(y)
-            y.fillna(global_mean, inplace=True)
+            self.fill_val = self.method(self.data)
 
-        return enc
+        return self.regularized_encode(x) if k else self.encode(x)
+
+
+    def encode(self, x):
+        """
+
+        :param x: data that we
+        :return:
+        """
+        apply_dict = dict()
+        applied_method = [apply_dict.update({key, self.method(self.values_dict[key])})
+                                                for key in self.values_dict.keys()]
+
+        return [applied_method[val] if applied_method.get(val) else self.fill_val for val in x]
+
+
+    # it might make more sense for the regularized encoding to be a "fit_transform"
+
+    def regularized_encode(self, x):
+        # Todo: prepare the regularized encoding functionality
+        pass
+    #
+    #     enc = np.array()
+    #
+    #     # Work in progress
+    #     kf = KFold(n_splits=k)
+    #     for compute_on, apply_to in kf.split(y):
+    #         four = y.loc[compute_on]
+    #         computed = method(four.groupby(col))
+    #         enc = y.loc[apply_to, col].map(computed)
+    #
+    #     if fill_na:
+    #         global_mean = method(y)
+    #         y.fillna(global_mean, inplace=True)
+    #
+    #     return enc
 
