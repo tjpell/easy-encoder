@@ -1,7 +1,9 @@
 """
 A simple library of functions that provide scikit-learn-esque
 feature engineering and preprocessing tools.
+
 MIT License
+
 Taylor Pellerin, https://www.linkedin.com/in/tjpell
 """
 
@@ -11,15 +13,15 @@ import numpy as np
 class UnknownEncoder:
     """
     Encode validation data with a preset "unknown value" for observations that were not
-    in the test set.
+    in the training set.
 
     Attributes
     ----------
-    classes_ : dict of shape (n_class,)
-        Holds the label for each class.
+    :param classes: Holds the label for each class.
+    :type classes: dict of {train: ""} for all values in training data
 
-    unk_val : int, None, string
-                  Value to replace new observations with
+    :param unk_val: Value to replace new observations with
+    :type unk_val: int, None, string
     """
 
     def __init__(self):
@@ -27,16 +29,17 @@ class UnknownEncoder:
         self.unk_val = None
 
     def fit(self, y):
-        """Fit unknown encoder
+        """
+        Fit unknown encoder on the data in a training set
 
         Parameters
         ----------
-        y : array-like of shape (n_samples,)
+        :param y : array-like of shape (n_samples,)
             Target values.
 
         Returns
         -------
-        self : returns an instance of self.
+        :return self : returns an instance of self.
         """
 
         # create dict of values in input for quicker lookups
@@ -48,6 +51,8 @@ class UnknownEncoder:
 
     def transform(self, y, unk_val=None):
         """
+        Replace all of values in y that are not in self.values_dict with unk_val
+
         Parameters
         ----------
         y : array-like of shape (n_samples,)
@@ -66,6 +71,8 @@ class UnknownEncoder:
         return pd.Series(val_col)
 
     def fit_transform(self, y, unk_val=None):
-        raise NotImplementedError
-
+        """
+        This is trivial and not recommended. All of the data is in this set, and so we return the same data.
+        """
+        return y
 

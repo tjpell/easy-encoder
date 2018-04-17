@@ -1,14 +1,16 @@
 """
 A simple library of functions that provide scikit-learn-esque
 feature engineering and preprocessing tools.
+
 MIT License
+
 Taylor Pellerin, https://www.linkedin.com/in/tjpell
 """
 
 import numpy as np
 
-from sklearn.model_selection import KFold
 from collections import defaultdict
+from sklearn.model_selection import KFold
 
 class TargetEncoder:
     """
@@ -19,7 +21,7 @@ class TargetEncoder:
     ----------
     method : which statistical method to apply to target variable
     data : categorical variable used as a predictor
-    target : variable that is of predictive interest
+    values_dict :
     k : what order of cross validation to use for regularization
     fill_na : whether or not to fill NA's with global method (such as mean)
     """
@@ -71,7 +73,8 @@ class TargetEncoder:
 
 
     def transform(self, x, method=np.mean(), k=None, fill_na=True):
-        """Replace categorical value with target encoded version
+        """
+        Replace categorical value with target encoded version
 
         Parameters
         ----------
@@ -114,10 +117,14 @@ class TargetEncoder:
 
 
     # it might make more sense for the regularized encoding to be a "fit_transform"
-
     def regularized_encode(self, x):
+        """
+
+        :param x:
+        :return:
+        """
         # Todo: prepare the regularized encoding functionality
-        pass
+        print("Not yet implemented, for now, please use fit_transform")
     #
     #     enc = np.array()
     #
@@ -133,4 +140,26 @@ class TargetEncoder:
     #         y.fillna(global_mean, inplace=True)
     #
     #     return enc
+
+    def fit_transform(self, x, y, method=np.mean(), k=5, fill_na=True):
+        """
+
+        :param x:
+        :param y:
+        :param method:
+        :param k:
+        :param fill_na:
+        :return:
+        """
+        kf = KFold(n_splits=k)
+            for compute_on, apply_to in kf.split(y):
+                four = y.loc[compute_on]
+                computed = method(four.groupby(col))
+                enc = y.loc[apply_to, col].map(computed)
+
+            if fill_na:
+                global_mean = method(y)
+                y.fillna(global_mean, inplace=True)
+
+            return enc
 
