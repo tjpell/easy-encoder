@@ -16,6 +16,9 @@ import pandas as pd
 from collections import defaultdict
 from sklearn.model_selection import KFold
 
+__all__ = ["TargetEncoder"]
+
+
 class TargetEncoder:
     """
     Encode validation data with a preset "unknown value" for observations that were not

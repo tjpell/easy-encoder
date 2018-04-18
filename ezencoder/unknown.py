@@ -10,6 +10,9 @@ Taylor Pellerin, https://www.linkedin.com/in/tjpell
 import pandas as pd
 import numpy as np
 
+__all__ = ["UnknownEncoder"]
+
+
 class UnknownEncoder:
     """
     Encode validation data with a preset "unknown value" for observations that were not

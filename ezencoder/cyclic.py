@@ -12,6 +12,8 @@ https://ianlondon.github.io/blog/encoding-cyclical-features-24hour-time/
 
 import numpy as np
 
+__all__ = ["CyclicEncoder"]
+
 
 class CyclicEncoder:
     """

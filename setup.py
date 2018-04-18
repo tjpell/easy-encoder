@@ -7,7 +7,7 @@ setup(
     url='https://github.com/tjpell/easy-encoder',
     download_url='https://github.com/tjpell/easy-encoder/archive/0.1.tar.gz',
     license='MIT',
-    py_modules=['src/unknown', 'src/target', 'src/cyclic'],
+    py_modules=['ezencoder/unknown', 'ezencoder/target', 'ezencoder/cyclic'],
     author='Taylor Pellerin',
     author_email='tpellerin51@gmail.com',
     install_requires=['numpy', 'pandas', 'sklearn', 'matplotlib'],
