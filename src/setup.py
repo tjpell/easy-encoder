@@ -2,12 +2,12 @@ from setuptools import setup
 
 setup(
     name='ezencoder',
-    packages = ['ezencoder'],  # this must be the same as the name above
+    packages = ['src'],  # this must be the same as the name above
     version='0.1',
     url='https://github.com/tjpell/easy-encoder',
     download_url='https://github.com/tjpell/easy-encoder/archive/0.1.tar.gz',
     license='MIT',
-    py_modules=['unknown', 'target', 'cyclic'],
+    py_modules=['src/unknown', 'src/target', 'src/cyclic'],
     author='Taylor Pellerin',
     author_email='tpellerin51@gmail.com',
     install_requires=['numpy', 'pandas', 'sklearn', 'matplotlib'],
