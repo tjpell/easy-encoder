@@ -6,11 +6,12 @@ MIT License
 
 Taylor Pellerin, https://www.linkedin.com/in/tjpell
 
-Inspiration drawn from Ian London's blog post:
+Inspiration for cyclic encoding drawn from Ian London's blog post:
 https://ianlondon.github.io/blog/encoding-cyclical-features-24hour-time/
 """
 
 import numpy as np
+
 
 class CyclicEncoder:
     """
@@ -19,7 +20,6 @@ class CyclicEncoder:
     Attributes
     ----------
     period : period for cycle of time series data
-
     method : trigonometric transformation to apply to target data, like 'sin' and 'cos'
     """
 
@@ -64,7 +64,7 @@ class CyclicEncoder:
 
     def fit_transform(self, y, period, method=('sin', 'cos')):
         """
-        T
+        Transform the provided data using the trig methods and period of data provided
 
         :param y: Data that we wish to transform
         :param method: Trig transformation to apply to the data

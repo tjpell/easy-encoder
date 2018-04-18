@@ -17,7 +17,7 @@ class UnknownEncoder:
 
     Attributes
     ----------
-    :param classes: Holds the label for each class.
+    classes: Holds the label for each class.
     :type classes: dict of {train: ""} for all values in training data
 
     :param unk_val: Value to replace new observations with
@@ -63,9 +63,10 @@ class UnknownEncoder:
         """
 
         # make sure that every value in val and test is in train. if not, replace with unk_val
-        self.unk_val = unk_val
-        values_dict = self.classes_
+        if unk_val is not None:
+            self.unk_val = unk_val
 
+        values_dict = self.classes_
         val_col = [unk_val if values_dict.get(v) is None else v for v in y.values]
 
         return pd.Series(val_col)
@@ -73,6 +74,16 @@ class UnknownEncoder:
     def fit_transform(self, y, unk_val=None):
         """
         This is trivial and not recommended. All of the data is in this set, and so we return the same data.
+        Instead, consider fitting encoder on training data and transforming new data.
+
+        Parameters
+        ----------
+        y : array-like of shape (n_samples,)
+            Target values.
+
+        unk_val : int, None, string
+                  Value to replace new observations with
         """
-        return y
+        self.fit(y)
+        return self.transform(y, unk_val)
 

@@ -1,13 +1,17 @@
 """
 A simple library of functions that provide scikit-learn-esque
-feature engineering and preprocessing tools.
+feature engineering and pre-processing tools.
 
 MIT License
 
 Taylor Pellerin, https://www.linkedin.com/in/tjpell
+
+Target encoding inspired by the following Kaggle kernel:
+https://www.kaggle.com/tnarik/likelihood-encoding-of-categorical-features
 """
 
 import numpy as np
+import pandas as pd
 
 from collections import defaultdict
 from sklearn.model_selection import KFold
@@ -37,7 +41,8 @@ class TargetEncoder:
 
 
     def fit(self, x, y):
-        """Fit unknown encoder
+        """
+        Fit target encoder. Builds dictionary mapping {category: list(target values)}
 
         Parameters
         ----------
@@ -74,7 +79,7 @@ class TargetEncoder:
 
     def transform(self, x, method=np.mean(), k=None, fill_na=True):
         """
-        Replace categorical value with target encoded version
+        Replace categorical data with target encoded version
 
         Parameters
         ----------
@@ -105,9 +110,11 @@ class TargetEncoder:
 
     def encode(self, x):
         """
+        Apply standard target encoding, using the stored method.
+        Best used on new data. For Training data, use fit_transform.
 
-        :param x: data that we
-        :return:
+        :param x: Data that we are going to encode
+        :return: Transformed data
         """
         apply_dict = dict()
         applied_method = [apply_dict.update({key, self.method(self.values_dict[key])})
@@ -116,50 +123,67 @@ class TargetEncoder:
         return [applied_method[val] if applied_method.get(val) else self.fill_val for val in x]
 
 
-    # it might make more sense for the regularized encoding to be a "fit_transform"
     def regularized_encode(self, x):
         """
+        Not yet implemented
 
-        :param x:
-        :return:
+        :param x: Data to be transformed
+        :return: Message
         """
-        # Todo: prepare the regularized encoding functionality
+        # Todo: prepare the regularized encoding functionality, or verify that it doesn't make sense
         print("Not yet implemented, for now, please use fit_transform")
-    #
-    #     enc = np.array()
-    #
-    #     # Work in progress
-    #     kf = KFold(n_splits=k)
-    #     for compute_on, apply_to in kf.split(y):
-    #         four = y.loc[compute_on]
-    #         computed = method(four.groupby(col))
-    #         enc = y.loc[apply_to, col].map(computed)
-    #
-    #     if fill_na:
-    #         global_mean = method(y)
-    #         y.fillna(global_mean, inplace=True)
-    #
-    #     return enc
 
-    def fit_transform(self, x, y, method=np.mean(), k=5, fill_na=True):
+
+    def fit_transform(self, x, y, method="mean", k=5, fill_na=True):
         """
+        For a given pair of categorical and response data, create a column of target encoded data. Default behavior
+        expects that we are going to fit transform training data, with k fold regularization. For test data, it is
+        recommended that you fit on training data and transform the new data.
 
-        :param x:
-        :param y:
-        :param method:
-        :param k:
-        :param fill_na:
+        :param x: Categorical variable to apply the encoding for
+        :param y: Target variable, either label encoded categories or continuous values
+        :param method: Numpy method that we wish to apply to target data
+        :param k: Order of k-fold cross validation that we wish to apply
+        :param fill_na: Whether or not to fill Nones in x with the result of applying method to all target data
+
         :return:
         """
+
+        if k > 1:
+            df = pd.DataFrame([x, y], columns=["x", "y"])
+            return self.reg_target_encoding(df, method, k, fill_na)
+
+        # Just do target encoding without regularization if k is not greater than 1 (or is None)
+        self.fit(x, y)
+        return self.transform(x, method, fill_na)
+
+    def reg_target_encoding(self, df, method="mean", k=5, fill_na=True):
+        """ Computes regularize target encoding.
+
+        Inputs:
+           train: training dataframe
+
+        """
+        col = "X"
+        new_col_name = "X_enc"
         kf = KFold(n_splits=k)
-            for compute_on, apply_to in kf.split(y):
-                four = y.loc[compute_on]
-                computed = method(four.groupby(col))
-                enc = y.loc[apply_to, col].map(computed)
+        df[new_col_name] = None
 
+        for method_index, apply_index in kf.split(df):
+            if method == "mean":
+                method_on_fold = df.loc[method_index].groupby(col).y.mean()  # get mean of train
+                if fill_na:
+                    global_method = df.loc[method_index].y.mean()  # get global mean for na imputation
+
+            if method == "sd":
+                method_on_fold = df.loc[method_index].groupby(col).y.sd()  # get mean of train
+                if fill_na:
+                    global_method = df.loc[method_index].y.sd()  # get global mean for na imputation
+
+            # apply the new method to the data
+            df.loc[apply_index, new_col_name] = df.loc[apply_index, col].map(method_on_fold)  # apply train mean to test
             if fill_na:
-                global_mean = method(y)
-                y.fillna(global_mean, inplace=True)
+                df.loc[apply_index, new_col_name].fillna(global_method, inplace=True)
 
-            return enc
+        return df["X_enc"]
 
