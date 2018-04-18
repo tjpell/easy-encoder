@@ -157,6 +157,7 @@ class TargetEncoder:
         self.fit(x, y)
         return self.transform(x, method, fill_na)
 
+
     def reg_target_encoding(self, df, method="mean", k=5, fill_na=True):
         """ Computes regularize target encoding.
 

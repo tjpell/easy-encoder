@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ezencoder',
-    packages = ['src'],  # this must be the same as the name above
+    packages = ['ezencoder'],  # this must be the same as the name above
     version='0.1',
     url='https://github.com/tjpell/easy-encoder',
     download_url='https://github.com/tjpell/easy-encoder/archive/0.1.tar.gz',
