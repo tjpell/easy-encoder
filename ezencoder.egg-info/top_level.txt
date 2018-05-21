@@ -1,4 +1,4 @@
-src
-src/cyclic
-src/target
-src/unknown
+ezencoder
+ezencoder/cyclic
+ezencoder/target
+ezencoder/unknown
